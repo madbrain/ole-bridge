@@ -1,4 +1,4 @@
 ole-bridge
 ==========
 
-OLE Bridge
+OLE Bridge is an experimentation on compound document.

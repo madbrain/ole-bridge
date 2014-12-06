@@ -1,0 +1,52 @@
+
+#ifndef CAR_H
+#define CAR_H
+
+#include "interfaces.h"
+
+class Car : public IRegistration, public IStatus, public IOleObject {
+public:
+	Car();
+	virtual ~Car();
+	
+	STDMETHODIMP QueryInterface(REFIID riid, void ** ppAny);
+	STDMETHODIMP_(ULONG) AddRef();
+	STDMETHODIMP_(ULONG) Release();
+	
+	STDMETHODIMP GetOwner(BSTR * pBstrOwner);
+	STDMETHODIMP SetOwner(BSTR bstrOwner);
+	
+	STDMETHODIMP GetSpeed(int * pnSpeed);
+	STDMETHODIMP SetSpeed(int nSpeed);
+
+	// IOleObject
+	STDMETHODIMP SetClientSite(LPOLECLIENTSITE);
+	STDMETHODIMP GetClientSite(LPOLECLIENTSITE*);
+	STDMETHODIMP SetHostNames(LPCOLESTR,LPCOLESTR);
+	STDMETHODIMP Close(DWORD);
+	STDMETHODIMP SetMoniker(DWORD,LPMONIKER);
+	STDMETHODIMP GetMoniker(DWORD,DWORD,LPMONIKER*);
+	STDMETHODIMP InitFromData(LPDATAOBJECT,BOOL,DWORD);
+	STDMETHODIMP GetClipboardData(DWORD,LPDATAOBJECT*);
+	STDMETHODIMP DoVerb(LONG,LPMSG,LPOLECLIENTSITE,LONG,HWND,LPCRECT);
+	STDMETHODIMP EnumVerbs(LPENUMOLEVERB*);
+	STDMETHODIMP Update();
+	STDMETHODIMP IsUpToDate();
+	STDMETHODIMP GetUserClassID(LPCLSID);
+	STDMETHODIMP GetUserType(DWORD,LPOLESTR*);
+	STDMETHODIMP SetExtent(DWORD,SIZEL*);
+	STDMETHODIMP GetExtent(DWORD,SIZEL*);
+	STDMETHODIMP Advise(LPADVISESINK,PDWORD);
+	STDMETHODIMP Unadvise(DWORD);
+	STDMETHODIMP EnumAdvise(LPENUMSTATDATA*);
+	STDMETHODIMP GetMiscStatus(DWORD,PDWORD);
+	STDMETHODIMP SetColorScheme(LPLOGPALETTE);
+
+private:
+	ULONG m_refCount;
+	char m_pcOwner[80];
+	int m_nSpeed;
+	LPOLECLIENTSITE m_clientSite;
+};
+
+#endif /* CAR_H */
