@@ -5,7 +5,7 @@ OBJS=$(SRCS:.cpp=.o)
 
 CC=i586-mingw32msvc-g++
 DEFINES=-Wall -MMD
-LIBS=-luuid
+LIBS=-luuid -lole32
 
 default : install
 

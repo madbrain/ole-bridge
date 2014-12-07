@@ -47,6 +47,7 @@ private:
 	char m_pcOwner[80];
 	int m_nSpeed;
 	LPOLECLIENTSITE m_clientSite;
+	LPOLEADVISEHOLDER m_OAHolder;
 };
 
 #endif /* CAR_H */
