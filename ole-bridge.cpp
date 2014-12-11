@@ -1,8 +1,8 @@
 
-#include "car-class-factory.h"
+#include "component-class-factory.h"
 #include "iid.h"
 
-// Voir "HTML Document" {25336920-03F9-11CF-8FD0-00AA00686F13}
+#ifdef MAKE_DLL
 
 ULONG g_lockCount = 0;
 ULONG g_objCount = 0;
@@ -11,7 +11,7 @@ STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, void ** ppAny) {
 	if(rclsid != CLSID_Car) {
 		return CLASS_E_CLASSNOTAVAILABLE;
 	}
-	CarClassFactory * pFactory = new CarClassFactory;
+	ComponentClassFactory * pFactory = new ComponentClassFactory;
 	HRESULT hr = pFactory->QueryInterface(riid, ppAny);
 	if(FAILED(hr)) {
 		delete pFactory;
@@ -26,3 +26,47 @@ STDAPI DllCanUnloadNow() {
 		return S_FALSE;
 	}
 }
+#else
+
+DWORD g_allLocks;
+int APIENTRY WinMain(HINSTANCE hInstance,
+                     HINSTANCE hPrevInstance,
+                     LPSTR     lpCmdLine,
+                     int       nCmdShow) {
+
+    CoInitialize(NULL);
+	
+#if 0
+    // register the type lib
+	ITypeLib* pTLib = NULL;
+	LoadTypeLibEx(L"AnyEXETypeInfo.tlb", REGKIND_REGISTER, &pTLib);
+	pTLib->Release();
+#endif
+
+	if(strstr(lpCmdLine, "/Embedding") || strstr(lpCmdLine, "-Embedding")) {
+        ComponentClassFactory cf;
+		DWORD regID = 0;
+		CoRegisterClassObject(CLSID_Component, (IClassFactory*)&cf, CLSCTX_LOCAL_SERVER, REGCLS_MULTIPLEUSE, &regID);
+		MSG ms;
+		while(GetMessage(&ms, 0, 0, 0)) {
+			TranslateMessage(&ms);
+			DispatchMessage(&ms);
+		}
+		CoRevokeClassObject(regID);
+    }
+	CoUninitialize();   
+	return 0;
+}
+
+void Lock() {
+    ++g_allLocks;
+}
+
+void UnLock() {
+	--g_allLocks;
+	if(g_allLocks == 0) {
+        PostQuitMessage(0);
+	}
+}
+
+#endif /* MAKE_DLL */

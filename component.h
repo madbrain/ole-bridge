@@ -1,23 +1,17 @@
 
-#ifndef CAR_H
-#define CAR_H
+#ifndef COMPONENT_H
+#define COMPONENT_H
 
 #include "interfaces.h"
 
-class Car : public IRegistration, public IStatus, public IOleObject {
+class Component : public IOleObject, public IPersistStorage, public IDataObject {
 public:
-	Car();
-	virtual ~Car();
+	Component();
+	virtual ~Component();
 	
 	STDMETHODIMP QueryInterface(REFIID riid, void ** ppAny);
 	STDMETHODIMP_(ULONG) AddRef();
 	STDMETHODIMP_(ULONG) Release();
-	
-	STDMETHODIMP GetOwner(BSTR * pBstrOwner);
-	STDMETHODIMP SetOwner(BSTR bstrOwner);
-	
-	STDMETHODIMP GetSpeed(int * pnSpeed);
-	STDMETHODIMP SetSpeed(int nSpeed);
 
 	// IOleObject
 	STDMETHODIMP SetClientSite(LPOLECLIENTSITE);
@@ -41,13 +35,32 @@ public:
 	STDMETHODIMP EnumAdvise(LPENUMSTATDATA*);
 	STDMETHODIMP GetMiscStatus(DWORD,PDWORD);
 	STDMETHODIMP SetColorScheme(LPLOGPALETTE);
+	
+	// IPersistStorage
+	STDMETHODIMP GetClassID(CLSID*);
+	STDMETHODIMP IsDirty();
+	STDMETHODIMP InitNew(LPSTORAGE);
+	STDMETHODIMP Load(LPSTORAGE);
+	STDMETHODIMP Save(LPSTORAGE,BOOL);
+	STDMETHODIMP SaveCompleted(LPSTORAGE);
+	STDMETHODIMP HandsOffStorage();
+	
+	// IDataObject
+	STDMETHODIMP GetData( FORMATETC*,STGMEDIUM*);
+	STDMETHODIMP GetDataHere( FORMATETC*,STGMEDIUM*);
+	STDMETHODIMP QueryGetData( FORMATETC*);
+	STDMETHODIMP GetCanonicalFormatEtc( FORMATETC*,FORMATETC*);
+	STDMETHODIMP SetData( FORMATETC*,STGMEDIUM*,BOOL);
+	STDMETHODIMP EnumFormatEtc( DWORD,IEnumFORMATETC**);
+	STDMETHODIMP DAdvise( FORMATETC*,DWORD,IAdviseSink*,PDWORD);
+	STDMETHODIMP DUnadvise( DWORD);
+	STDMETHODIMP EnumDAdvise( IEnumSTATDATA**);
 
 private:
 	ULONG m_refCount;
-	char m_pcOwner[80];
-	int m_nSpeed;
 	LPOLECLIENTSITE m_clientSite;
 	LPOLEADVISEHOLDER m_OAHolder;
+	LPDATAADVISEHOLDER m_ODAHolder;
 };
 
-#endif /* CAR_H */
+#endif /* COMPONENT_H */

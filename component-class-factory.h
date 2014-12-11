@@ -4,11 +4,11 @@
 
 #include <windows.h>
 
-class CarClassFactory : public IClassFactory {
+class ComponentClassFactory : public IClassFactory {
 
 public:
-	CarClassFactory();
-	virtual ~CarClassFactory();
+	ComponentClassFactory();
+	virtual ~ComponentClassFactory();
 
 	HRESULT __stdcall QueryInterface(REFIID riid, void ** ppAny);
 	ULONG __stdcall AddRef();

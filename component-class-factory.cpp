@@ -1,24 +1,30 @@
 
-#include "car-class-factory.h"
-#include "car.h"
+#include "component-class-factory.h"
+#include "component.h"
 
+#ifdef MAKE_DLL
 extern ULONG g_lockCount;
 extern ULONG g_objCount;
+#endif
 
-CarClassFactory::CarClassFactory() {
+ComponentClassFactory::ComponentClassFactory() {
 	m_refCount = 0;
+#ifdef MAKE_DLL
 	g_objCount++;
+#endif
 }
 
-CarClassFactory::~CarClassFactory() {
+ComponentClassFactory::~ComponentClassFactory() {
+#ifdef MAKE_DLL
 	g_objCount--;
+#endif
 }
 
-ULONG __stdcall CarClassFactory::AddRef() {
+ULONG __stdcall ComponentClassFactory::AddRef() {
 	return ++m_refCount;
 }
 
-ULONG __stdcall CarClassFactory::Release() {
+ULONG __stdcall ComponentClassFactory::Release() {
 	if(--m_refCount == 0) {
 		delete this;
 		return 0;
@@ -26,7 +32,7 @@ ULONG __stdcall CarClassFactory::Release() {
 	return m_refCount;
 }
 
-HRESULT __stdcall CarClassFactory::QueryInterface(REFIID riid, void ** ppAny) {
+HRESULT __stdcall ComponentClassFactory::QueryInterface(REFIID riid, void ** ppAny) {
 	// IID_IUnknown is the REFIID of standard interface IUnknown
 	if(riid == IID_IUnknown) { 
 		*ppAny = (IUnknown *)this; 
@@ -40,25 +46,27 @@ HRESULT __stdcall CarClassFactory::QueryInterface(REFIID riid, void ** ppAny) {
 	return S_OK; 
 }
 
-HRESULT __stdcall CarClassFactory::CreateInstance (
+HRESULT __stdcall ComponentClassFactory::CreateInstance (
 		LPUNKNOWN pUnkOuter, REFIID riid, void ** ppAny) {
 	if(pUnkOuter != NULL) { 
 		return CLASS_E_NOAGGREGATION; 
 	} 
-	Car * pCar = new Car(); 
-	HRESULT hr = pCar->QueryInterface(riid, ppAny); 
+	Component * pComponent = new Component(); 
+	HRESULT hr = pComponent->QueryInterface(riid, ppAny); 
 	if(FAILED(hr)) {
-		delete pCar; 
+		delete pComponent; 
 	}
 	return hr; 
 } 
 
-HRESULT __stdcall CarClassFactory::LockServer(BOOL fLock) { 
+HRESULT __stdcall ComponentClassFactory::LockServer(BOOL fLock) {
+#ifdef MAKE_DLL
 	if(fLock) {
 		g_lockCount++;
 	} else {
 		g_lockCount--;
 	}
+#endif
 	return S_OK;
 }
 

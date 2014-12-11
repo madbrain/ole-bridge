@@ -2,8 +2,8 @@
 #ifndef INTERFACES_H
 #define INTERFACES_H
 
-#include <unknwn.h>
 #include <windows.h>
+#include <unknwn.h>
 
 struct IRegistration : public IUnknown {
 	virtual HRESULT __stdcall GetOwner(BSTR * pBstrOwner) = 0;
