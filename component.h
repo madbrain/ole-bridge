@@ -2,7 +2,7 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
-#include "interfaces.h"
+#include <windows.h>
 
 class Component : public IOleObject, public IPersistStorage, public IDataObject {
 public:

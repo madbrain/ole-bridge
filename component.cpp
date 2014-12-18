@@ -46,7 +46,7 @@ STDMETHODIMP Component::QueryInterface(REFIID riid, void ** ppAny) {
     // IID_IUnknown is the REFIID of standard interface IUnknown
     if(riid == IID_IUnknown) {
 		// to avoid confusion caused by virtual inheritance
-		*ppAny = (IUnknown *)(IStatus *)this;
+		*ppAny = (IUnknown *)(IOleObject *)this;
 
 	} else if(riid == IID_IOleObject) {
 		*ppAny = (IOleObject *)this;
@@ -68,6 +68,7 @@ STDMETHODIMP Component::QueryInterface(REFIID riid, void ** ppAny) {
 // IOleObject
 
 STDMETHODIMP Component::SetClientSite(LPOLECLIENTSITE pClientSite) {
+	std::wcout << "SetClientSite " << std::endl;
 	if (this->m_clientSite != NULL) {
 		this->m_clientSite->Release();
 	}
@@ -79,6 +80,7 @@ STDMETHODIMP Component::SetClientSite(LPOLECLIENTSITE pClientSite) {
 }
 
 STDMETHODIMP Component::GetClientSite(LPOLECLIENTSITE *pClientSite) {
+	std::wcout << "GetClientSite " << std::endl;
 	*pClientSite = this->m_clientSite;
 	if (this->m_clientSite != NULL) {
 		this->m_clientSite->AddRef();
@@ -248,8 +250,14 @@ STDMETHODIMP Component::IsDirty() {
 	return E_NOTIMPL;
 }
 
-STDMETHODIMP Component::InitNew(LPSTORAGE) {
+STDMETHODIMP Component::InitNew(LPSTORAGE pStorage) {
 	std::wcout << "InitNew " << std::endl;
+	
+	STATSTG stat;
+	pStorage->Stat(&stat, STATFLAG_DEFAULT);
+	std::wcout << L"- pwcsName: " << stat.pwcsName << std::endl;
+	std::wcout << L"- type: " << stat.type << std::endl;
+	
 	return S_OK;
 }
 
